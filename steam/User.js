@@ -78,8 +78,8 @@ module.exports = (function(){
     client = this.setupClient(args);
 
     client.then(function(result){
-      players = cleanObject(result.data.response.players, PlayerContainer);
-      deferred.resolve( players.length === 1 ? players[0] : players );
+      players = result.data.response.players;
+      deferred.resolve( players );
     })
     .fail(function(result){
       deferred.reject(result);
@@ -121,8 +121,9 @@ module.exports = (function(){
           steamIds.push(friendsList[i].steamid);
         }
       }
-      _t.GetPlayerSummaries(steamIds.join()).done(function(friends){
-        deferred.resolve(friends);
+      _t.GetPlayerSummaries(steamIds.join()).done(function(players){
+        var friends = cleanObject(players, PlayerContainer);
+        deferred.resolve(friends.length === 1 ? friends[0] : friends);
       });
     })
     .fail(function(result){
